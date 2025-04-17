@@ -1,0 +1,50 @@
+# === Java / Maven / Spring Boot ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+
+# === Maven Wrapper ===
+!.mvn/wrapper/maven-wrapper.jar
+
+# === Eclipse ===
+.classpath
+.project
+.settings/
+.loadpath
+
+# === STS (Spring Tool Suite, basado en Eclipse) ===
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# === IntelliJ IDEA ===
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# === NetBeans ===
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# === VS Code ===
+.vscode/
+
+# === Build directories (may appear in submodules) ===
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# === Logs ===
+*.log
+
+# === OS-specific ===
+.DS_Store
+Thumbs.db
