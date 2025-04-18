@@ -1,7 +1,8 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity;
+package uoc.tfg.cvelascofa.pageturner_backend.entity.book;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
 
 @Data
 @Entity

@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity;
+package uoc.tfg.cvelascofa.pageturner_backend.entity.book;
 
 import java.util.Set;
 
@@ -11,11 +11,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
+import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
 
 @Data
 @Entity
 @Table(name = "books")
-public class Book extends BaseEntity { 
+public class Book extends BaseEntity {
 
     @Column(nullable = false)
     private String title;
@@ -28,9 +29,6 @@ public class Book extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "genre_id", nullable = false)
     private Genre genre;
-
-   // @ManyToMany(mappedBy = "authors")
-   // private Set<BookAuthor> book;
 
    @OneToMany(mappedBy = "book")
    private Set<BookEdition> bookEditions;
