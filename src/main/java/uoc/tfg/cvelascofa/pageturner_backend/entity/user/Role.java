@@ -1,8 +1,9 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity;
+package uoc.tfg.cvelascofa.pageturner_backend.entity.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
 
 import java.util.Set;
 
@@ -19,4 +20,5 @@ public class Role extends BaseEntity {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
 }
