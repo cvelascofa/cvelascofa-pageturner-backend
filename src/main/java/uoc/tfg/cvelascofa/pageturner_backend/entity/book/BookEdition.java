@@ -41,4 +41,3 @@ public class BookEdition extends BaseEntity {
     private Integer pages;
 
 }
-
