@@ -32,10 +32,11 @@ public class Book extends BaseEntity {
    // @ManyToMany(mappedBy = "authors")
    // private Set<BookAuthor> book;
 
-   // @OneToMany(mappedBy = "book")
-   // private Set<BookEdition> bookEditions;
+   @OneToMany(mappedBy = "book")
+   private Set<BookEdition> bookEditions;
 
     @ManyToMany(mappedBy = "books")
     @ToString.Exclude
     private Set<Author> authors;
+
 }
