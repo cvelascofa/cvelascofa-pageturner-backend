@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity.book;
+package uoc.tfg.cvelascofa.pageturner_backend.book;
 
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
-import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
+import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
 @Data
 @Entity

@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity;
+package uoc.tfg.cvelascofa.pageturner_backend.shared;
 
 import java.time.LocalDateTime;
 

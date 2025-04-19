@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.controller;
+package uoc.tfg.cvelascofa.pageturner_backend.shared.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

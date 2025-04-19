@@ -1,9 +1,9 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity.user;
+package uoc.tfg.cvelascofa.pageturner_backend.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
+import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
 import java.util.Set;
 

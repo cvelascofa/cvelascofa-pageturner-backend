@@ -1,11 +1,11 @@
-package uoc.tfg.cvelascofa.pageturner_backend.entity.review;
+package uoc.tfg.cvelascofa.pageturner_backend.review;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import uoc.tfg.cvelascofa.pageturner_backend.entity.BaseEntity;
-import uoc.tfg.cvelascofa.pageturner_backend.entity.book.Book;
-import uoc.tfg.cvelascofa.pageturner_backend.entity.user.User;
+import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
+import uoc.tfg.cvelascofa.pageturner_backend.book.Book;
+import uoc.tfg.cvelascofa.pageturner_backend.user.User;
 
 @Data
 @Entity
