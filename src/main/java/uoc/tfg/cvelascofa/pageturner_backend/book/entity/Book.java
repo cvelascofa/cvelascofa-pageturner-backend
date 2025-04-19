@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.book;
+package uoc.tfg.cvelascofa.pageturner_backend.book.entity;
 
 import java.util.Set;
 
