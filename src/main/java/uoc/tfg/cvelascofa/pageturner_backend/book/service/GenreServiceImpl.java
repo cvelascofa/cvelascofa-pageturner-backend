@@ -6,6 +6,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Genre;
 import uoc.tfg.cvelascofa.pageturner_backend.book.mapper.GenreMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.GenreRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.GenreService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,29 +22,42 @@ public class GenreServiceImpl implements GenreService {
     private GenreMapper genreMapper;
 
     @Override
-    public GenreDTO createGenre(GenreDTO genreDTO) {
-        Genre genre = genreMapper.genreDTOToGenre(genreDTO);
+    public GenreDTO create(GenreDTO genreDTO) {
+        Genre genre = genreMapper.toEntity(genreDTO);
         genre = genreRepository.save(genre);
-        return genreMapper.genreToGenreDTO(genre);
+        return genreMapper.toDTO(genre);
     }
 
     @Override
-    public List<GenreDTO> getAllGenres() {
+    public Optional<GenreDTO> update(Long id, GenreDTO genreDTO) {
+        Optional<Genre> optionalGenre = genreRepository.findById(id);
+        if (optionalGenre.isPresent()) {
+            Genre existingGenre = optionalGenre.get();
+            existingGenre.setName(genreDTO.getName());
+            Genre updatedGenre = genreRepository.save(existingGenre);
+            return Optional.of(genreMapper.toDTO(updatedGenre));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<GenreDTO> getAll() {
         List<Genre> genres = genreRepository.findAll();
 
         return genres.stream()
-                .map(genreMapper::genreToGenreDTO)
+                .map(genreMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<GenreDTO> getGenreById(Long id) {
+    public Optional<GenreDTO> getById(Long id) {
         Optional<Genre> genre = genreRepository.findById(id);
-        return genre.map(genreMapper::genreToGenreDTO);
+        return genre.map(genreMapper::toDTO);
     }
 
     @Override
-    public void deleteGenre(Long id) {
+    public void delete(Long id) {
         genreRepository.deleteById(id);
     }
 

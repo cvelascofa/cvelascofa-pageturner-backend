@@ -6,6 +6,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.dto.BookDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
 import uoc.tfg.cvelascofa.pageturner_backend.book.mapper.BookMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.BookRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,28 +19,28 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     @Override
-    public BookDTO createBook(BookDTO bookDto) {
+    public BookDTO create(BookDTO bookDto) {
         Book book = bookMapper.toEntity(bookDto);
         Book savedBook = bookRepository.save(book);
         return bookMapper.toDTO(savedBook);
     }
 
     @Override
-    public BookDTO getBookById(Long id) {
+    public BookDTO getById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
         return bookMapper.toDTO(book);
     }
 
     @Override
-    public List<BookDTO> getAllBooks() {
+    public List<BookDTO> getAll() {
         return bookRepository.findAll().stream()
                 .map(bookMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BookDTO updateBook(Long id, BookDTO bookDto) {
+    public BookDTO update(Long id, BookDTO bookDto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
 
@@ -52,8 +53,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBook(Long id) {
+    public void delete(Long id) {
         bookRepository.deleteById(id);
     }
-
 }

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
-import uoc.tfg.cvelascofa.pageturner_backend.book.service.GenreService;
+import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.GenreService;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,32 +18,41 @@ public class GenreController {
     private GenreService genreService;
 
     @PostMapping
-    public ResponseEntity<GenreDTO> createGenre(@RequestBody GenreDTO genreDTO) {
-        GenreDTO createdGenre = genreService.createGenre(genreDTO);
+    public ResponseEntity<GenreDTO> create(@RequestBody GenreDTO genreDTO) {
+        GenreDTO createdGenre = genreService.create(genreDTO);
         return new ResponseEntity<>(createdGenre, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<GenreDTO>> getAllGenres() {
-        List<GenreDTO> genres = genreService.getAllGenres();
+    public ResponseEntity<List<GenreDTO>> getAll() {
+        List<GenreDTO> genres = genreService.getAll();
         return new ResponseEntity<>(genres, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GenreDTO> getGenreById(@PathVariable Long id) {
-        Optional<GenreDTO> genreDTO = genreService.getGenreById(id);
+    public ResponseEntity<GenreDTO> getById(@PathVariable Long id) {
+        Optional<GenreDTO> genreDTO = genreService.getById(id);
         return genreDTO.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<GenreDTO> update(@PathVariable Long id, @RequestBody GenreDTO genreDTO) {
+        Optional<GenreDTO> updatedGenre = genreService.update(id, genreDTO);
+        return updatedGenre
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGenre(@PathVariable Long id) {
-        Optional<GenreDTO> genreDTO = genreService.getGenreById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Optional<GenreDTO> genreDTO = genreService.getById(id);
         if (genreDTO.isPresent()) {
-            genreService.deleteGenre(id);
+            genreService.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }
