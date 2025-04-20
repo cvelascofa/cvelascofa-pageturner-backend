@@ -8,13 +8,9 @@ import java.util.Optional;
 public interface BookEditionService {
 
     BookEditionDTO create(BookEditionDTO bookEditionDTO);
-
     List<BookEditionDTO> getAll();
-
     Optional<BookEditionDTO> getById(Long id);
-
     BookEditionDTO update(Long id, BookEditionDTO bookEditionDTO);
-
     boolean delete(Long id);
 
 }
