@@ -1,11 +1,13 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "genres")
 @EqualsAndHashCode(callSuper = true)
