@@ -22,9 +22,9 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public GenreDTO createGenre(GenreDTO genreDTO) {
-        Genre genre = genreMapper.genreDTOToGenre(genreDTO);
+        Genre genre = genreMapper.toEntity(genreDTO);
         genre = genreRepository.save(genre);
-        return genreMapper.genreToGenreDTO(genre);
+        return genreMapper.toDTO(genre);
     }
 
     @Override
@@ -32,14 +32,14 @@ public class GenreServiceImpl implements GenreService {
         List<Genre> genres = genreRepository.findAll();
 
         return genres.stream()
-                .map(genreMapper::genreToGenreDTO)
+                .map(genreMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<GenreDTO> getGenreById(Long id) {
         Optional<Genre> genre = genreRepository.findById(id);
-        return genre.map(genreMapper::genreToGenreDTO);
+        return genre.map(genreMapper::toDTO);
     }
 
     @Override
