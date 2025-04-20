@@ -2,7 +2,7 @@ package uoc.tfg.cvelascofa.pageturner_backend.book.controller;
 
 import org.springframework.web.bind.annotation.*;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.BookDTO;
-import uoc.tfg.cvelascofa.pageturner_backend.book.service.BookService;
+import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookService;
 
 import java.util.List;
 
@@ -18,28 +18,28 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookDTO> getAllBooks() {
-        return bookService.getAllBooks();
+    public List<BookDTO> getAll() {
+        return bookService.getAll();
     }
 
     @PostMapping
-    public BookDTO createBook(@RequestBody BookDTO bookDTO) {
-        return bookService.createBook(bookDTO);
+    public BookDTO create(@RequestBody BookDTO bookDTO) {
+        return bookService.create(bookDTO);
     }
 
     @GetMapping("/{id}")
-    public BookDTO getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id);
+    public BookDTO getById(@PathVariable Long id) {
+        return bookService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public BookDTO updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
-        return bookService.updateBook(id, bookDTO);
+    public BookDTO update(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
+        return bookService.update(id, bookDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    public void delete(@PathVariable Long id) {
+        bookService.delete(id);
     }
 
 }

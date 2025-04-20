@@ -6,6 +6,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.dto.BookEditionDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.BookEdition;
 import uoc.tfg.cvelascofa.pageturner_backend.book.mapper.BookEditionMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.BookEditionRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookEditionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,14 +22,14 @@ public class BookEditionServiceImpl implements BookEditionService {
     private BookEditionMapper bookEditionMapper;
 
     @Override
-    public BookEditionDTO createBookEdition(BookEditionDTO bookEditionDTO) {
+    public BookEditionDTO create(BookEditionDTO bookEditionDTO) {
         BookEdition bookEdition = bookEditionMapper.toEntity(bookEditionDTO);
         BookEdition saved = bookEditionRepository.save(bookEdition);
         return bookEditionMapper.toDTO(saved);
     }
 
     @Override
-    public List<BookEditionDTO> getAllBookEditions() {
+    public List<BookEditionDTO> getAll() {
         return bookEditionRepository.findAll()
                 .stream()
                 .map(bookEditionMapper::toDTO)
@@ -36,13 +37,13 @@ public class BookEditionServiceImpl implements BookEditionService {
     }
 
     @Override
-    public Optional<BookEditionDTO> getBookEditionById(Long id) {
+    public Optional<BookEditionDTO> getById(Long id) {
         return bookEditionRepository.findById(id)
                 .map(bookEditionMapper::toDTO);
     }
 
     @Override
-    public BookEditionDTO updateBookEdition(Long id, BookEditionDTO bookEditionDTO) {
+    public BookEditionDTO update(Long id, BookEditionDTO bookEditionDTO) {
         if (bookEditionRepository.existsById(id)) {
             BookEdition bookEdition = bookEditionMapper.toEntity(bookEditionDTO);
             bookEdition.setId(id);
@@ -53,7 +54,7 @@ public class BookEditionServiceImpl implements BookEditionService {
     }
 
     @Override
-    public boolean deleteBookEdition(Long id) {
+    public boolean delete(Long id) {
         if (bookEditionRepository.existsById(id)) {
             bookEditionRepository.deleteById(id);
             return true;
