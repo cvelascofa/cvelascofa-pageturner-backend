@@ -12,5 +12,6 @@ public interface GenreService {
     Optional<GenreDTO> getById(Long id);
     Optional<GenreDTO> update(Long id, GenreDTO genreDTO);
     void delete(Long id);
+    boolean isGenreInUse(Long genreId);
 
 }

@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Genre;
 import uoc.tfg.cvelascofa.pageturner_backend.book.mapper.GenreMapper;
+import uoc.tfg.cvelascofa.pageturner_backend.book.repository.BookRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.GenreRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.GenreService;
+import uoc.tfg.cvelascofa.pageturner_backend.exception.GenreInUseException;
+import uoc.tfg.cvelascofa.pageturner_backend.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,9 @@ public class GenreServiceImpl implements GenreService {
 
     @Autowired
     private GenreMapper genreMapper;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @Override
     public GenreDTO create(GenreDTO genreDTO) {
@@ -58,7 +64,20 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void delete(Long id) {
+        Optional<Genre> genre = genreRepository.findById(id);
+        if (genre.isEmpty()) {
+            throw new ResourceNotFoundException("Genre not found");
+        }
+
+        if (bookRepository.existsByGenreId(id)) {
+            throw new GenreInUseException("This genre is still referenced by books");
+        }
         genreRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean isGenreInUse(Long genreId) {
+        return bookRepository.existsByGenreId(genreId);
     }
 
 }

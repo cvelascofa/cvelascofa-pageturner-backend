@@ -46,13 +46,8 @@ public class GenreController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        Optional<GenreDTO> genreDTO = genreService.getById(id);
-        if (genreDTO.isPresent()) {
-            genreService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        genreService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
