@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.GenreService;
+import uoc.tfg.cvelascofa.pageturner_backend.exception.GenreInUseException;
+import uoc.tfg.cvelascofa.pageturner_backend.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,8 +48,13 @@ public class GenreController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        genreService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            genreService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (GenreInUseException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
-
 }
