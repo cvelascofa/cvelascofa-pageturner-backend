@@ -1,6 +1,8 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Genre;
@@ -76,8 +78,9 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public boolean isGenreInUse(Long genreId) {
-        return bookRepository.existsByGenreId(genreId);
+    public Page<GenreDTO> searchGenresPageable(String name, Pageable pageable) {
+        Page<Genre> genresPage = genreRepository.findByNameContainingIgnoreCase(name, pageable);
+        return genresPage.map(genreMapper::toDTO);
     }
 
 }

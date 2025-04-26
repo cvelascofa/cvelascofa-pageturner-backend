@@ -54,4 +54,5 @@ public class LanguageServiceImpl implements LanguageService {
     public void delete(Long id) {
         languageRepository.deleteById(id);
     }
+
 }
