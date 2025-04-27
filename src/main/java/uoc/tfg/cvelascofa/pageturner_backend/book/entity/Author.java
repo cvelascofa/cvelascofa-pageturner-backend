@@ -25,12 +25,7 @@ public class Author extends BaseEntity {
     @Column(name = "followers_count")
     private Integer followersCount;
 
-    @ManyToMany
-    @JoinTable(
-        name = "book_author",
-        joinColumns = @JoinColumn(name = "author_id"),
-        inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
+    @ManyToMany(mappedBy = "authors")
     @ToString.Exclude
     private Set<Book> books;
 
