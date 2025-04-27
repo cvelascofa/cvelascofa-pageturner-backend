@@ -1,5 +1,7 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.GenreDTO;
 
 import java.util.List;
@@ -12,5 +14,6 @@ public interface GenreService {
     Optional<GenreDTO> getById(Long id);
     Optional<GenreDTO> update(Long id, GenreDTO genreDTO);
     void delete(Long id);
+    Page<GenreDTO> searchGenresPageable(String name, Pageable pageable);
 
 }
