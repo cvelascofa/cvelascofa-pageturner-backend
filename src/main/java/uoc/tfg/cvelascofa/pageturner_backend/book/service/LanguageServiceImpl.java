@@ -1,6 +1,8 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.LanguageDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Language;
@@ -53,6 +55,12 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public void delete(Long id) {
         languageRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<LanguageDTO> searchLanguagesPageable(String name, Pageable pageable) {
+        Page<Language> languagesPage = languageRepository.findByNameContainingIgnoreCase(name, pageable);
+        return languagesPage.map(languageMapper::toDTO);
     }
 
 }
