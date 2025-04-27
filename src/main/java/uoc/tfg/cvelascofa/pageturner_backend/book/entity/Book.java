@@ -2,13 +2,7 @@ package uoc.tfg.cvelascofa.pageturner_backend.book.entity;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
@@ -33,7 +27,12 @@ public class Book extends BaseEntity {
    @OneToMany(mappedBy = "book")
    private Set<BookEdition> bookEditions;
 
-    @ManyToMany(mappedBy = "books")
+    @ManyToMany
+    @JoinTable(
+        name = "book_author",
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
     @ToString.Exclude
     private Set<Author> authors;
 
