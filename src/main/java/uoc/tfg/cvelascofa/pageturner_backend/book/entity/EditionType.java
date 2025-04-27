@@ -12,7 +12,7 @@ import java.util.Set;
 public class EditionType extends BaseEntity {
 
     @Column(nullable = false, length = 100)
-    private String typeName;
+    private String name;
 
     @OneToMany(mappedBy = "editionType")
     private Set<BookEdition> bookEditions;
