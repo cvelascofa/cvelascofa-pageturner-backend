@@ -28,13 +28,8 @@ public class Book extends BaseEntity {
    @OneToMany(mappedBy = "book")
    private Set<BookEdition> bookEditions;
 
-    @ManyToMany
-    @JoinTable(
-        name = "book_author",
-        joinColumns = @JoinColumn(name = "book_id"),
-        inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    @ToString.Exclude
-    private Set<Author> authors;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
 
 }

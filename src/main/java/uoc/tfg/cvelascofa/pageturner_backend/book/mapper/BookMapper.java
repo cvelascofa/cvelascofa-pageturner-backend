@@ -9,11 +9,11 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
 public interface  BookMapper {
 
     @Mapping(target = "genre", source = "genre")
-    @Mapping(target = "authors", source = "authors")
+    @Mapping(target = "author", source = "author")
     Book toEntity(BookDTO bookDTO);
 
     @Mapping(target = "genre", source = "genre")
-    @Mapping(target = "authors", source = "authors")
+    @Mapping(target = "author", source = "author")
     BookDTO toDTO(Book book);
 
 }
