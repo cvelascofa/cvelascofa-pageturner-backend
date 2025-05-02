@@ -13,6 +13,6 @@ public class BookDTO {
     private String description;
     private LocalDate publicationDate;
     private GenreDTO genre;
-    private Set<AuthorDTO> authors;
+    private AuthorDTO author;
 
 }
