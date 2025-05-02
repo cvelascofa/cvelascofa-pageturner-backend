@@ -1,5 +1,6 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.entity;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -17,11 +18,11 @@ public class Book extends BaseEntity {
 
     private String description;
 
-    @Column(name = "publication_year")
-    private Integer publicationYear;
+    @Column(name = "publication_date")
+    private LocalDate publicationDate;
 
     @ManyToOne
-    @JoinColumn(name = "genre_id", nullable = false)
+    @JoinColumn(name = "genre_id")
     private Genre genre;
 
    @OneToMany(mappedBy = "book")
