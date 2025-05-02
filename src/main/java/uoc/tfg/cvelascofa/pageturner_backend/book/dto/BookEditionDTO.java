@@ -18,4 +18,6 @@ public class BookEditionDTO {
     private Boolean isMainEdition;
     private Integer pages;
 
+    private BookDTO book;
+
 }
