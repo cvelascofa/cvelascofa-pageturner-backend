@@ -4,15 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import uoc.tfg.cvelascofa.pageturner_backend.book.dto.AuthorDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.BookDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Author;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Genre;
 import uoc.tfg.cvelascofa.pageturner_backend.book.mapper.BookMapper;
+import uoc.tfg.cvelascofa.pageturner_backend.book.repository.AuthorRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.BookRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book.repository.GenreRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,21 +27,20 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final BookMapper bookMapper;
+    private final AuthorRepository authorRepository;
 
     @Override
     public BookDTO create(BookDTO bookDTO) {
-        // Obtener el género asociado al libro desde el DTO
         Genre genre = genreRepository.findById(bookDTO.getGenre().getId())
                 .orElseThrow(() -> new RuntimeException("Genre not found with ID: " + bookDTO.getGenre().getId()));
+        Author author = authorRepository.findById(bookDTO.getAuthor().getId())
+                .orElseThrow(() -> new RuntimeException("Author not found with ID: " + bookDTO.getAuthor().getId()));
 
-        // Convertir el DTO a la entidad Book, asignando el género
         Book book = bookMapper.toEntity(bookDTO);
+
+        book.setAuthor(author);
         book.setGenre(genre);
-
-        // Guardar el libro en la base de datos
         Book savedBook = bookRepository.save(book);
-
-        // Retornar el DTO del libro creado
         return bookMapper.toDTO(savedBook);
     }
 
@@ -61,9 +65,17 @@ public class BookServiceImpl implements BookService {
 
         Book bookToUpdate = bookMapper.toEntity(bookDto);
 
+        Genre genre = genreRepository.findById(bookDto.getGenre().getId())
+                .orElseThrow(() -> new RuntimeException("Genre not found with id: " + bookDto.getGenre().getId()));
+        existingBook.setGenre(genre);
+
+        Author author = authorRepository.findById(bookDto.getAuthor().getId())
+                .orElseThrow(() -> new RuntimeException("Author not found with id: " + bookDto.getAuthor().getId()));
+        existingBook.setAuthor(author);
+
         existingBook.setTitle(bookToUpdate.getTitle());
         existingBook.setDescription(bookToUpdate.getDescription());
-        existingBook.setPublicationDate(bookToUpdate.getPublicationDate());  // Usar la fecha completa
+        existingBook.setPublicationDate(bookToUpdate.getPublicationDate());
 
         Book updatedBook = bookRepository.save(existingBook);
 
