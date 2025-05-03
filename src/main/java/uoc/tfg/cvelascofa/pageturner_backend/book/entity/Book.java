@@ -18,6 +18,13 @@ public class Book extends BaseEntity {
 
     private String description;
 
+    @Column(name = "cover_image")
+    private String coverImage;
+
+    private String isbn;
+
+    private Integer pages;
+
     @Column(name = "publication_date")
     private LocalDate publicationDate;
 
@@ -25,11 +32,19 @@ public class Book extends BaseEntity {
     @JoinColumn(name = "genre_id")
     private Genre genre;
 
-   @OneToMany(mappedBy = "book")
-   private Set<BookEdition> bookEditions;
+    @ManyToOne
+    @JoinColumn(name = "language_id")
+    private Language language;
 
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
 
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
+    @ManyToOne
+    @JoinColumn(name = "edition_type_id")
+    private EditionType editionType;
 }

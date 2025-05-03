@@ -17,8 +17,8 @@ public class ReadingProgress extends BaseEntity {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "book_edition_id", nullable = false)
-    private BookEdition bookEdition;
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
     @Column(name = "pages_read", nullable = false)
     private int pagesRead;
