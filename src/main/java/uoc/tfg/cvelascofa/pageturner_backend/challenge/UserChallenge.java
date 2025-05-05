@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
-import uoc.tfg.cvelascofa.pageturner_backend.user.User;
+import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 
 import java.time.LocalDate;
 
