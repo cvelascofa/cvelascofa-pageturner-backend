@@ -2,7 +2,7 @@ package uoc.tfg.cvelascofa.pageturner_backend.user.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import uoc.tfg.cvelascofa.pageturner_backend.user.User;
+import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDTO;
 
 import java.util.List;

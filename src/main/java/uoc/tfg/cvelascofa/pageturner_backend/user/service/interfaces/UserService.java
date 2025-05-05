@@ -1,5 +1,6 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces;
 
+import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDTO;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public interface UserService {
     //UserDTO userByUsername(String username);
     //void deleteUser(Long id);
     //UserDTO updateUser(UserDTO userDTO);
-    //UserDTO getUser(String email);
+    User getByEmail(String email);
     //List<UserDTO> getPaginatedUsers(int page, int size);
 }

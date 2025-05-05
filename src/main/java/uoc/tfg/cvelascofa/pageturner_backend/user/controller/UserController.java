@@ -2,7 +2,6 @@ package uoc.tfg.cvelascofa.pageturner_backend.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import uoc.tfg.cvelascofa.pageturner_backend.user.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
 
