@@ -6,6 +6,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.entity.Favourite;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
 @Data
@@ -47,4 +48,8 @@ public class Book extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "edition_type_id")
     private EditionType editionType;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Favourite> favourites;
+
 }
