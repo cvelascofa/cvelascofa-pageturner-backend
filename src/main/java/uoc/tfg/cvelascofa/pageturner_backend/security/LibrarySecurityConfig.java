@@ -36,12 +36,19 @@ public class LibrarySecurityConfig {
 
     private static final String[] UN_SECURED_URLs = {
             "/test/public",
-            "/users",
-            "/login"
+            "/users/**",
+            "/login",
+            "/books/**",
+            "/authors/**",
+            "/languages/**",
+            "/edition-types/**",
+            "/publishers/**",
+            "/favourites/**",
     };
 
     private static final String[] ADMIN_URL = {
-            "/test/admin"
+            "/test/admin",
+            "/genres/**",
     };
 
     @Bean
@@ -71,7 +78,6 @@ public class LibrarySecurityConfig {
                 .build();
     }
 
-    // CORS Configuration Bean
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
 
