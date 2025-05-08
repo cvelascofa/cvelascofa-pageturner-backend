@@ -8,6 +8,9 @@ import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.mapper.FavouriteMa
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.FavouriteRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces.FavouriteService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class FavouriteServiceImpl implements FavouriteService {
@@ -16,14 +19,20 @@ public class FavouriteServiceImpl implements FavouriteService {
     private final FavouriteMapper favouriteMapper;
 
     @Override
-    public void addFavourite(FavouriteDTO favouriteDTO) {
+    public void create(FavouriteDTO favouriteDTO) {
         Favourite favourite = favouriteMapper.toEntity(favouriteDTO);
         favouriteRepository.save(favourite);
     }
 
     @Override
-    public void removeFavourite(FavouriteDTO favouriteDTO) {
-        Favourite favourite = favouriteMapper.toEntity(favouriteDTO);
-        favouriteRepository.delete(favourite);
+    public void delete(Long id) {
+        favouriteRepository.deleteById(id);
+    }
+
+    public List<FavouriteDTO> getFavouritesByUserId(Long userId) {
+        List<Favourite> favourites = favouriteRepository.findByUserId(userId);
+        return favourites.stream()
+                .map(favouriteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

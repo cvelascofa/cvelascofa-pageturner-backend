@@ -10,10 +10,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface FavouriteMapper {
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "book.id", target = "bookId")
     FavouriteDTO toDTO(Favourite favourite);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "userId", target = "user.id")
     @Mapping(source = "bookId", target = "book.id")
     Favourite toEntity(FavouriteDTO favouriteDTO);

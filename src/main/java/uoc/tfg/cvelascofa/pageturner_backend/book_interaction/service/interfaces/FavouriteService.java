@@ -1,10 +1,14 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces;
 
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.dto.FavouriteDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.entity.Favourite;
+
+import java.util.List;
 
 public interface FavouriteService {
 
-    void addFavourite(FavouriteDTO favouriteDTO);
-    void removeFavourite(FavouriteDTO favouriteDTO);
+    void create(FavouriteDTO favouriteDTO);
+    void delete(Long id);
+    List<FavouriteDTO> getFavouritesByUserId(Long userId);
 
 }

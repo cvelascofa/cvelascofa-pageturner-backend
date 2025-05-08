@@ -40,9 +40,10 @@ public class LibrarySecurityConfig {
             "/login",
             "/books/**",
             "/authors/**",
-            //"/languages/**",
+            "/languages/**",
             "/edition-types/**",
             "/publishers/**",
+            "/favourites/**",
     };
 
     private static final String[] ADMIN_URL = {
