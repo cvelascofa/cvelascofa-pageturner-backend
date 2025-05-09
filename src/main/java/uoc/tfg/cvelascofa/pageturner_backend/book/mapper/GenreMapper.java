@@ -9,8 +9,6 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Genre;
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
 
-    GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
-
     GenreDTO toDTO(Genre genre);
     Genre toEntity(GenreDTO genreDTO);
 

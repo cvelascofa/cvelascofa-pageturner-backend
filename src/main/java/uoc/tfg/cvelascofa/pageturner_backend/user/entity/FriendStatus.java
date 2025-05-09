@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.user;
+package uoc.tfg.cvelascofa.pageturner_backend.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

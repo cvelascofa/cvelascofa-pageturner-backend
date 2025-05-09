@@ -1,4 +1,4 @@
-package uoc.tfg.cvelascofa.pageturner_backend.user;
+package uoc.tfg.cvelascofa.pageturner_backend.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class Role extends BaseEntity {
 
     private String description;
 
-    @ManyToMany(mappedBy = "roles")
+    @OneToMany(mappedBy = "role")
     private Set<User> users;
 
 }

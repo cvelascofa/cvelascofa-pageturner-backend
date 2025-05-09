@@ -62,5 +62,4 @@ public class LanguageServiceImpl implements LanguageService {
         Page<Language> languagesPage = languageRepository.findByNameContainingIgnoreCase(name, pageable);
         return languagesPage.map(languageMapper::toDTO);
     }
-
 }

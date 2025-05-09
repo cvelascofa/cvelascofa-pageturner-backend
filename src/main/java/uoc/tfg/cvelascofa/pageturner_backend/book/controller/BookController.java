@@ -1,5 +1,10 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uoc.tfg.cvelascofa.pageturner_backend.book.dto.BookDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookService;
@@ -42,4 +47,20 @@ public class BookController {
         bookService.delete(id);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<BookDTO>> searchBooksPageable(
+            @RequestParam(defaultValue = "") String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<BookDTO> books = bookService.searchBooksPageable(title, pageable);
+        return ResponseEntity.ok(books);
+    }
 }

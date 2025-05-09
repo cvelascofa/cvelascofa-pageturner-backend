@@ -15,6 +15,5 @@ public class EditionType extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "editionType")
-    private Set<BookEdition> bookEditions;
-
+    private Set<Book> books;
 }

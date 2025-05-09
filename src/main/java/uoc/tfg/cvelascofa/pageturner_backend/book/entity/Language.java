@@ -18,6 +18,6 @@ public class Language extends BaseEntity {
     private String code;
 
     @OneToMany(mappedBy = "language")
-    private Set<BookEdition> bookEditions;
+    private Set<Book> books;
 
 }

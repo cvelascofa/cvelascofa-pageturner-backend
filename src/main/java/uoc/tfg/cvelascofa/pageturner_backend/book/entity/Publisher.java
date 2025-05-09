@@ -19,6 +19,6 @@ public class Publisher extends BaseEntity {
     private String country;
 
     @OneToMany(mappedBy = "publisher")
-    private Set<BookEdition> bookEditions;
+    private Set<Book> books;
 
 }
