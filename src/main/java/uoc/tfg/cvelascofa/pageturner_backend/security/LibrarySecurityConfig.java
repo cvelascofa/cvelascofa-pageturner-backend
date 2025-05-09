@@ -44,6 +44,7 @@ public class LibrarySecurityConfig {
             "/edition-types/**",
             "/publishers/**",
             "/favourites/**",
+            "/reviews/**",
     };
 
     private static final String[] ADMIN_URL = {

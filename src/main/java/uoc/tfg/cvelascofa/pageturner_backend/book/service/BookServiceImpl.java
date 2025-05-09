@@ -14,6 +14,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.book.service.interfaces.BookService
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -115,5 +116,10 @@ public class BookServiceImpl implements BookService {
     public Page<BookDTO> searchBooksPageable(String title, Pageable pageable) {
         Page<Book> booksPage = bookRepository.findByTitleContainingIgnoreCase(title, pageable);
         return booksPage.map(bookMapper::toDTO);
+    }
+
+    @Override
+    public Optional<Book> getBookEntityById(Long id) {
+        return bookRepository.findById(id);
     }
 }

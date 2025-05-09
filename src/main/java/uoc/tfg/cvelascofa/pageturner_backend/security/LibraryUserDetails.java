@@ -17,6 +17,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.service.UserServiceImpl;
 public class LibraryUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
+    private Long id;
     private String email;
     private String password;
     private List<GrantedAuthority> authorities;
@@ -29,6 +30,7 @@ public class LibraryUserDetails implements UserDetails {
                         .split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+        id = user.getId();
     }
 
     @Override
@@ -71,5 +73,9 @@ public class LibraryUserDetails implements UserDetails {
         String username = ((UserDetails)auth.getPrincipal()).getUsername();
         User user = userService.getByEmail(username);
         return user;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

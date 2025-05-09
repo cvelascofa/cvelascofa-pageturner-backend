@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,5 +52,10 @@ public class UserServiceImpl implements UserService {
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    @Override
+    public Optional<User> getById(Long id) {
+        return userRepository.findById(id);
     }
 }
