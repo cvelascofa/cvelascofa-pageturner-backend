@@ -47,11 +47,11 @@ public class LibrarySecurityConfig {
             "/reviews/**",
             "/reading-status/**",
             "/reading-progress/**",
+            "/genres/**",
     };
 
     private static final String[] ADMIN_URL = {
             "/test/admin",
-            "/genres/**",
     };
 
     @Bean
