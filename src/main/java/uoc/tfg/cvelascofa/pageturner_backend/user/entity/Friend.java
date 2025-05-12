@@ -15,12 +15,12 @@ import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 public class Friend extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "friend_id", nullable = false)
-    private User friend;
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private User recipient;
 
     @ManyToOne
     @JoinColumn(name = "friend_status_id", nullable = false)
