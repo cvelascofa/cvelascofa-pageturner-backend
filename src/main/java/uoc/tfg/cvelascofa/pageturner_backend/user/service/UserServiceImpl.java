@@ -1,11 +1,18 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import uoc.tfg.cvelascofa.pageturner_backend.exception.UserNotFoundException;
+import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserCreateDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDisplayDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.Role;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
-import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.mapper.UserMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.RoleRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserRepository;
@@ -26,25 +33,25 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public UserDTO save(UserDTO userDTO) {
-        User user = userMapper.toEntity(userDTO);
+    public UserCreateDTO save(UserCreateDTO userCreateDTO) {
+        User user = userMapper.toEntity(userCreateDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        if (userDTO.getRole() != null && userDTO.getRole().getId() != null) {
-            Role role = roleRepository.findByName(userDTO.getRole().getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Role not found for name: " + userDTO.getRole().getName()));
+        if (userCreateDTO.getRole() != null && userCreateDTO.getRole().getId() != null) {
+            Role role = roleRepository.findByName(userCreateDTO.getRole().getName())
+                    .orElseThrow(() -> new IllegalArgumentException("Role not found for name: " + userCreateDTO.getRole().getName()));
             user.setRole(role);
         }
 
         User savedUser = userRepository.save(user);
-        return userMapper.toDTO(savedUser);
+        return userMapper.toCreateDTO(savedUser);
     }
 
     @Override
-    public List<UserDTO> getAll() {
+    public List<UserCreateDTO> getAll() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(userMapper::toDTO)
+                .map(userMapper::toCreateDTO)
                 .collect(Collectors.toList());
     }
 
@@ -58,4 +65,20 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getById(Long id) {
         return userRepository.findById(id);
     }
+
+    @Override
+    public UserDisplayDTO update(Long id, UserCreateDTO userCreateDTO) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userMapper.updateUserFromDTO(userCreateDTO, existingUser);
+        User updatedUser = userRepository.save(existingUser);
+        return userMapper.toDisplayDTO(updatedUser);
+    }
+
+    @Override
+    public Page<UserDisplayDTO> searchUsersPageable(String username, Pageable pageable) {
+        Page<User> usersPage = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+        return usersPage.map(userMapper::toDisplayDTO);
+    }
+
 }

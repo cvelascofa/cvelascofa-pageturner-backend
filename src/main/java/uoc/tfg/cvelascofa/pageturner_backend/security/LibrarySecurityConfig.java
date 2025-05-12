@@ -47,6 +47,7 @@ public class LibrarySecurityConfig {
             "/reviews/**",
             "/reading-status/**",
             "/reading-progress/**",
+            "/roles/**",
     };
 
     private static final String[] ADMIN_URL = {
