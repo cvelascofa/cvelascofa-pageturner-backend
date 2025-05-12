@@ -2,13 +2,12 @@ package uoc.tfg.cvelascofa.pageturner_backend.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import uoc.tfg.cvelascofa.pageturner_backend.exception.UserNotFoundException;
+import uoc.tfg.cvelascofa.pageturner_backend.user.dto.RoleDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserCreateDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDisplayDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.Role;
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
         if (userCreateDTO.getRole() != null && userCreateDTO.getRole().getId() != null) {
             Role role = roleRepository.findByName(userCreateDTO.getRole().getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Role not found for name: " + userCreateDTO.getRole().getName()));
+                    .orElseThrow(() -> new IllegalArgumentException("Role not found"));
             user.setRole(role);
         }
 
@@ -67,10 +66,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDisplayDTO update(Long id, UserCreateDTO userCreateDTO) {
+    public UserDisplayDTO update(Long id, UserDisplayDTO userDTO) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        userMapper.updateUserFromDTO(userCreateDTO, existingUser);
+
+        existingUser.setUsername(userDTO.getUsername());
+        existingUser.setEmail(userDTO.getEmail());
+
+        if (userDTO.getRole() != null && userDTO.getRole().getId() != null) {
+            Role role = roleRepository.findByName(userDTO.getRole().getName())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            existingUser.setRole(role);
+        }
+
         User updatedUser = userRepository.save(existingUser);
         return userMapper.toDisplayDTO(updatedUser);
     }
@@ -80,5 +88,4 @@ public class UserServiceImpl implements UserService {
         Page<User> usersPage = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
         return usersPage.map(userMapper::toDisplayDTO);
     }
-
 }

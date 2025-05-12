@@ -15,13 +15,10 @@ public interface UserMapper {
     UserCreateDTO toCreateDTO(User user);
     User toEntity(UserCreateDTO userCreateDTO);
     List<UserCreateDTO> toDTOList(List<User> users);
-    void updateUserFromDTO(UserCreateDTO userCreateDTO, @MappingTarget User user);
-
 
     // UserDisplayDTO
     UserDisplayDTO toDisplayDTO(User user);
     User toEntity(UserDisplayDTO dto);
     List<UserDisplayDTO> toDisplayDTOList(List<User> users);
-    void updateUserFromDisplayDTO(UserDisplayDTO dto, @MappingTarget User user);
 
 }

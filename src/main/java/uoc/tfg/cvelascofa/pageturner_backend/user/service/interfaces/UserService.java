@@ -14,7 +14,7 @@ public interface UserService {
     UserCreateDTO save(UserCreateDTO userCreateDTO);
     List<UserCreateDTO> getAll();
     Optional<User> getById(Long id);
-    UserDisplayDTO update(Long id, UserCreateDTO userCreateDTO);
+    UserDisplayDTO update(Long id, UserDisplayDTO userCreateDTO);
     User getByEmail(String email);
     Page<UserDisplayDTO> searchUsersPageable(String username, Pageable pageable);
 
