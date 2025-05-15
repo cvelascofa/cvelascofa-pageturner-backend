@@ -13,5 +13,6 @@ public interface FriendService {
     List<FriendDTO> getAcceptedFriends(Long userId);
     List<FriendDTO> getReceivedRequests(Long userId);
     List<FriendDTO> getSentRequests(Long userId);
+    List<FriendDTO> getAllRelations(Long userId);
 
 }

@@ -99,4 +99,12 @@ public class FriendServiceImpl implements FriendService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<FriendDTO> getAllRelations(Long userId) {
+        List<Friend> friends = friendRepository.findBySenderIdOrRecipientId(userId, userId);
+        return friends.stream()
+                .map(friend -> friendMapper.toDTO(friend))
+                .collect(Collectors.toList());
+    }
+
 }

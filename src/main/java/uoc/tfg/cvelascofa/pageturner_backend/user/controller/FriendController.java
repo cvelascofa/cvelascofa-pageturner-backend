@@ -121,4 +121,19 @@ public class FriendController {
         }
     }
 
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<List<FriendDTO>> getAllFriendsAndRequests(@PathVariable Long userId) {
+        try {
+            Long authUserId = getAuthenticatedUserId();
+            if (!authUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.emptyList());
+            }
+            List<FriendDTO> allRelations = friendService.getAllRelations(userId);
+            return ResponseEntity.ok(allRelations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
+        }
+    }
+
+
 }
