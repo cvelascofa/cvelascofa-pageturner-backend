@@ -88,4 +88,13 @@ public class UserServiceImpl implements UserService {
         Page<User> usersPage = userRepository.findByUsernameContainingIgnoreCase(username, pageable);
         return usersPage.map(userMapper::toDisplayDTO);
     }
+
+    @Override
+    public List<UserDisplayDTO> searchUsersByUsernameWithoutPagination(String username) {
+        List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
+        return users.stream()
+                .map(userMapper::toDisplayDTO)
+                .toList();
+    }
+
 }

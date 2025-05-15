@@ -1,9 +1,8 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.enums;
 
-public enum FriendStatusEnum {
+public enum FriendStatus {
 
     PENDING,
-    ACCEPTED,
-    REJECTED
+    ACCEPTED
 
 }

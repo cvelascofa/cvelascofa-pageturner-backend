@@ -13,6 +13,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -24,6 +25,16 @@ public class UserController {
     @PostMapping
     public UserCreateDTO create(@RequestBody UserCreateDTO userCreateDTO) {
         return userService.save(userCreateDTO);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> userOpt = userService.getById(id);
+        if (userOpt.isPresent()) {
+            return ResponseEntity.ok(userOpt.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
@@ -66,4 +77,10 @@ public class UserController {
         Page<UserDisplayDTO> users = userService.searchUsersPageable(username, pageable);
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/search/friends/candidates")
+    public List<UserDisplayDTO> searchUsersWithoutPagination(@RequestParam String username) {
+        return userService.searchUsersByUsernameWithoutPagination(username);
+    }
+
 }
