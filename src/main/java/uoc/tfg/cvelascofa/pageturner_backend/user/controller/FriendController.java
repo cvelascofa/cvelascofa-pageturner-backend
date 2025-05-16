@@ -27,16 +27,16 @@ public class FriendController {
     }
 
     @PostMapping("/request")
-    public ResponseEntity<String> sendFriendRequest(@RequestBody FriendDTO friendDTO) {
+    public ResponseEntity<Void> sendFriendRequest(@RequestBody FriendDTO friendDTO) {
         try {
             Long userId = getAuthenticatedUserId();
             if (!userId.equals(friendDTO.getSenderId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             friendService.sendFriendRequest(friendDTO);
-            return ResponseEntity.ok("Request sent");
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Send error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -55,16 +55,16 @@ public class FriendController {
     }
 
     @DeleteMapping("/reject/{senderId}/{recipientId}")
-    public ResponseEntity<String> rejectFriendRequest(@PathVariable Long senderId, @PathVariable Long recipientId) {
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long senderId, @PathVariable Long recipientId) {
         try {
             Long userId = getAuthenticatedUserId();
             if (!userId.equals(senderId) && !userId.equals(recipientId)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             friendService.rejectFriendRequest(senderId, recipientId);
-            return ResponseEntity.ok("Request rejected");
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Reject error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
