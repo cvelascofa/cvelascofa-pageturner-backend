@@ -47,6 +47,8 @@ public class LibrarySecurityConfig {
             "/reviews/**",
             "/reading-status/**",
             "/reading-progress/**",
+            "/roles/**",
+            "/friends/**",
             "/genres/**",
     };
 

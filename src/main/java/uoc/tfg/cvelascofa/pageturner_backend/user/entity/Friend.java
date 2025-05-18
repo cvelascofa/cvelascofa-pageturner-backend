@@ -1,29 +1,31 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
+import uoc.tfg.cvelascofa.pageturner_backend.user.enums.FriendStatus;
 
 @Data
 @Entity
 @Table(name = "friends")
-@EqualsAndHashCode(callSuper = true)
-public class Friend extends BaseEntity {
+public class Friend {
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @EmbeddedId
+    private FriendId id;
 
-    @ManyToOne
-    @JoinColumn(name = "friend_id", nullable = false)
-    private User friend;
+    @ManyToOne(optional = false)
+    @MapsId("senderId")
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
-    @ManyToOne
-    @JoinColumn(name = "friend_status_id", nullable = false)
+    @ManyToOne(optional = false)
+    @MapsId("recipientId")
+    @JoinColumn(name = "recipient_id")
+    private User recipient;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "friend_status", nullable = false)
     private FriendStatus friendStatus;
 
 }

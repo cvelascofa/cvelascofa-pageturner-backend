@@ -1,21 +1,22 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDisplayDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
-import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserCreateDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    UserDTO save(UserDTO userDTO);
-    //boolean existsByUsername(String username);
-    //boolean existsByEmail(String email);
-    List<UserDTO> getAll();
+    UserCreateDTO save(UserCreateDTO userCreateDTO);
+    List<UserCreateDTO> getAll();
     Optional<User> getById(Long id);
-    //UserDTO userByUsername(String username);
-    //void deleteUser(Long id);
-    //UserDTO updateUser(UserDTO userDTO);
+    UserDisplayDTO update(Long id, UserDisplayDTO userCreateDTO);
     User getByEmail(String email);
-    //List<UserDTO> getPaginatedUsers(int page, int size);
+    Page<UserDisplayDTO> searchUsersPageable(String username, Pageable pageable);
+    List<UserDisplayDTO> searchUsersByUsernameWithoutPagination(String username);
+
 }

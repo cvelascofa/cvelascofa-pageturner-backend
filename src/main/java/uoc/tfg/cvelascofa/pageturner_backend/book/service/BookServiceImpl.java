@@ -89,7 +89,7 @@ public class BookServiceImpl implements BookService {
         existingBook.setAuthor(author);
 
         Publisher publisher = publisherRepository.findById(bookDto.getPublisher().getId())
-                .orElseThrow(() -> new RuntimeException("Publisher not found with id: " + bookDto.getPublisher().getId()));
+                .orElseThrow(() -> new RuntimeException("Publisher not found"));
         existingBook.setPublisher(publisher);
 
         EditionType editionType = editionTypeRepository.findById(bookDto.getEditionType().getId())
