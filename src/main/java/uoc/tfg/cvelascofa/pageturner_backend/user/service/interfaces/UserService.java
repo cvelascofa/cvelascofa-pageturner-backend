@@ -17,6 +17,7 @@ public interface UserService {
     UserDisplayDTO update(Long id, UserDisplayDTO userCreateDTO);
     User getByEmail(String email);
     Page<UserDisplayDTO> searchUsersPageable(String username, Pageable pageable);
+    List<UserDisplayDTO> searchUsersByUsernameWithoutPagination(String username);
     Optional<UserDisplayDTO> getUserDisplayById(Long id);
 
 }

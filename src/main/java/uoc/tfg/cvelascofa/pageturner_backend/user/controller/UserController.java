@@ -13,6 +13,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getByEmail(@PathVariable String email) {
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         try {
             User user = userService.getByEmail(email);
             return ResponseEntity.ok(user);
@@ -66,16 +67,4 @@ public class UserController {
         Page<UserDisplayDTO> users = userService.searchUsersPageable(username, pageable);
         return ResponseEntity.ok(users);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDisplayDTO> getById(@PathVariable Long id) {
-        try {
-            return userService.getUserDisplayById(id)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (RuntimeException ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 }

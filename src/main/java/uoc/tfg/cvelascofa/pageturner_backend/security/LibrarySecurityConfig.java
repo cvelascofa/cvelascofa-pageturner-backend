@@ -49,6 +49,7 @@ public class LibrarySecurityConfig {
             "/reading-progress/**",
             "/roles/**",
             "/friends/**",
+            "/genres/**",
     };
 
     private static final String[] ADMIN_URL = {
@@ -95,7 +96,6 @@ public class LibrarySecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
