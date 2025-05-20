@@ -27,6 +27,16 @@ public class UserController {
         return userService.save(userCreateDTO);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> userOpt = userService.getById(id);
+        if (userOpt.isPresent()) {
+            return ResponseEntity.ok(userOpt.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping
     public List<UserCreateDTO> getAll() {
         return userService.getAll();
