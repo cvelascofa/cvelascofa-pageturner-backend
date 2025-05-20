@@ -18,5 +18,6 @@ public interface UserService {
     User getByEmail(String email);
     Page<UserDisplayDTO> searchUsersPageable(String username, Pageable pageable);
     List<UserDisplayDTO> searchUsersByUsernameWithoutPagination(String username);
+    Optional<UserDisplayDTO> getUserDisplayById(Long id);
 
 }

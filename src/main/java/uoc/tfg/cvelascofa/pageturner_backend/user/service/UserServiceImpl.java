@@ -66,6 +66,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserDisplayDTO> getUserDisplayById(Long id) {
+        return userRepository.findById(id)
+                .map(userMapper::toDisplayDTO);
+    }
+
+    @Override
     public UserDisplayDTO update(Long id, UserDisplayDTO userDTO) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
