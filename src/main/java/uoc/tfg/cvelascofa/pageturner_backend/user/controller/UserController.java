@@ -67,4 +67,10 @@ public class UserController {
         Page<UserDisplayDTO> users = userService.searchUsersPageable(username, pageable);
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/search/friends/candidates")
+    public List<UserDisplayDTO> searchUsersWithoutPagination(@RequestParam String username) {
+        return userService.searchUsersByUsernameWithoutPagination(username);
+    }
+
 }
