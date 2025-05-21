@@ -6,19 +6,19 @@ import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
 import java.util.Set;
 
-@Data
-@Entity
-@Table(name = "publishers")
-public class Publisher extends BaseEntity {
+    @Data
+    @Entity
+    @Table(name = "publishers")
+    public class Publisher extends BaseEntity {
 
-    @Column(nullable = false, length = 255)
-    private String name;
+        @Column(nullable = false, length = 255)
+        private String name;
 
-    private String website;
+        private String website;
 
-    private String country;
+        private String country;
 
-    @OneToMany(mappedBy = "publisher")
-    private Set<Book> books;
+        @OneToMany(mappedBy = "publisher")
+        private Set<Book> books;
 
-}
+    }
