@@ -12,8 +12,10 @@ import java.util.Optional;
 public interface ReadingProgressService {
 
     ReadingProgressDTO create(ReadingProgressDTO readingProgressDTO, User user, Book book);
-    Optional<ReadingProgressDTO> getByUserAndBook(Long userId, Long bookId);
-    Optional<ReadingProgressDTO> update(Long userId, Long bookId, ReadingProgressDTO readingProgressDTO);
-    void delete(Long userId, Long bookId);
+    List<ReadingProgressDTO> getAllByUserAndBook(Long userId, Long bookId);
+    void deleteById(Long id);
+    Optional<ReadingProgressDTO> getById(Long id);
+    Optional<ReadingProgressDTO> update(Long id, ReadingProgressDTO readingProgressDTO);
+    Page<ReadingProgressDTO> getPaginatedByUserAndBook(Long userId, Long bookId, Pageable pageable);
 
 }
