@@ -2,9 +2,9 @@ package uoc.tfg.cvelascofa.pageturner_backend.book_interaction.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.enums.ReadingStatus;
+import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -12,34 +12,24 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "reading_progress")
-public class ReadingProgress {
-
-    @EmbeddedId
-    private ReadingProgressId id;
+public class ReadingProgress extends BaseEntity {
 
     @ManyToOne(optional = false)
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(optional = false)
-    @MapsId("bookId")
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    //@ManyToOne
-    //@JoinColumn(name = "reading_status_id")
-    //private ReadingStatus readingStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reading_status", nullable = false)
+    private ReadingStatus readingStatus;
 
     @Column(name = "pages_read")
     private Integer pagesRead;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "progress_date")
+    private LocalDateTime progressDate;
 
 }

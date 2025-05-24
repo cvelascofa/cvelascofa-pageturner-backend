@@ -1,6 +1,10 @@
 package uoc.tfg.cvelascofa.pageturner_backend.book_interaction.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +18,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.security.LibraryUserDetails;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,7 +36,6 @@ public class ReadingProgressController {
 
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null) {
             LibraryUserDetails userDetails = (LibraryUserDetails) authentication.getPrincipal();
             return userDetails.getId();
@@ -46,44 +50,57 @@ public class ReadingProgressController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Book book = bookRepository.findById(readingProgressDTO.getBookId())
                 .orElseThrow(() -> new RuntimeException("Book not found"));
-
         readingProgressDTO.setUserId(userId);
         readingProgressDTO.setBookId(book.getId());
-
-        Optional<ReadingProgressDTO> existingProgress = readingProgressService.getByUserAndBook(user.getId(), book.getId());
-
-        if (existingProgress.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         ReadingProgressDTO created = readingProgressService.create(readingProgressDTO, user, book);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping("/{userId}/{bookId}")
-    public ResponseEntity<ReadingProgressDTO> getByUserAndBook(@PathVariable Long userId, @PathVariable Long bookId) {
-        Optional<ReadingProgressDTO> readingProgressDTO = readingProgressService.getByUserAndBook(userId, bookId);
-        return readingProgressDTO
-                .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<List<ReadingProgressDTO>> getAllByUserAndBook(@PathVariable Long userId, @PathVariable Long bookId) {
+        List<ReadingProgressDTO> progressList = readingProgressService.getAllByUserAndBook(userId, bookId);
+        if (progressList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(progressList, HttpStatus.OK);
     }
 
-    @PutMapping("/{userId}/{bookId}")
-    public ResponseEntity<ReadingProgressDTO> update(@PathVariable Long userId, @PathVariable Long bookId, @RequestBody ReadingProgressDTO readingProgressDTO) {
-        Optional<ReadingProgressDTO> updatedProgress = readingProgressService.update(userId, bookId, readingProgressDTO);
+    @PutMapping("/{id}")
+    public ResponseEntity<ReadingProgressDTO> update(@PathVariable Long id, @RequestBody ReadingProgressDTO readingProgressDTO) {
+        Optional<ReadingProgressDTO> updatedProgress = readingProgressService.update(id, readingProgressDTO);
         return updatedProgress.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/{userId}/{bookId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId, @PathVariable Long bookId) {
-        Optional<ReadingProgressDTO> readingProgress = readingProgressService.getByUserAndBook(userId, bookId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Optional<ReadingProgressDTO> readingProgress = readingProgressService.getById(id);
         if (readingProgress.isPresent()) {
-            readingProgressService.delete(userId, bookId);
+            readingProgressService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/paginated/{userId}/{bookId}")
+    public ResponseEntity<Page<ReadingProgressDTO>> getPaginatedByUserAndBook(
+            @PathVariable Long userId,
+            @PathVariable Long bookId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by("progressDate").ascending()
+                : Sort.by("progressDate").descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<ReadingProgressDTO> pageResult = readingProgressService
+                .getPaginatedByUserAndBook(userId, bookId, pageable);
+
+        return ResponseEntity.ok(pageResult);
+    }
+
 
 }
