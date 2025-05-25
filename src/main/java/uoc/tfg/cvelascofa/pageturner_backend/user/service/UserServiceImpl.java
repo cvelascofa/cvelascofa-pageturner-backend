@@ -17,6 +17,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.repository.RoleRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
+import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final UserStatisticsService userStatisticsService;
 
     @Override
     public UserCreateDTO save(UserCreateDTO userCreateDTO) {
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
+        userStatisticsService.createStatistics(savedUser);
         return userMapper.toCreateDTO(savedUser);
     }
 
