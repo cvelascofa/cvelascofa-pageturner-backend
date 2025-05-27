@@ -15,6 +15,7 @@ public class UserStatisticsDTO {
     private int currentReadingStreak;
     private int totalPagesRead;
 
+    private int totalRatings;
     private double averageRating;
 
     private LocalDate lastReadingSession;

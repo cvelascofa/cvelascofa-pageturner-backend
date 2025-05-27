@@ -11,6 +11,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserService;
+import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private UserStatisticsService userStatisticsService;
 
     @Override
     public ReviewDTO create(ReviewDTO dto, User user, Book book) {
@@ -40,6 +43,12 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review savedReview = reviewRepository.save(review);
 
+        List<Review> userReviews = reviewRepository.findByUserId(user.getId());
+        List<ReviewDTO> userReviewDTOs = userReviews.stream()
+                .map(reviewMapper::toDTO)
+                .toList();
+
+        userStatisticsService.updateRatingStats(user, userReviewDTOs);
         return reviewMapper.toDTO(savedReview);
     }
 
@@ -91,6 +100,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     public List<ReviewDTO> getByBookId(Long bookId) {
         List<Review> reviews = reviewRepository.findByBookId(bookId);
+        return reviewMapper.toDTOList(reviews);
+    }
+
+    @Override
+    public List<ReviewDTO> getByUserId(Long userId) {
+        List<Review> reviews = reviewRepository.findByUserId(userId);
         return reviewMapper.toDTOList(reviews);
     }
 

@@ -14,7 +14,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatist
 @RestController
 @RequestMapping("/users/{userId}/statistics")
 @RequiredArgsConstructor
-public class UserStatisticsControlelr {
+public class UserStatisticsController {
 
     private final UserStatisticsService userStatisticsService;
 
