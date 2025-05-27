@@ -1,5 +1,6 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.RoleDTO;
@@ -26,5 +27,12 @@ public class RoleServiceImpl implements RoleService {
         return roles.stream()
                 .map(roleMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getRoleNameById(Long id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
+        return role.getName();
     }
 }

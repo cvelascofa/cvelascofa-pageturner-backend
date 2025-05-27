@@ -16,5 +16,6 @@ public interface ReviewService {
     void delete(Long userId, Long bookId);
     Optional<ReviewDTO> getByUserAndBook(Long userId, Long bookId);
     List<ReviewDTO> getByBookId(Long bookId);
+    List<ReviewDTO> getByUserId(Long userId);
 
 }

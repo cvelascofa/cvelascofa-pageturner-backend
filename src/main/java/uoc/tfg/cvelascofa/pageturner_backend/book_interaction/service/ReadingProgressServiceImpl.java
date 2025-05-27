@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import uoc.tfg.cvelascofa.pageturner_backend.book.entity.Book;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.dto.ReadingProgressDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.entity.ReadingProgress;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.enums.ReadingStatus;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.mapper.ReadingProgressMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReadingProgressRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces.ReadingProgressService;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
+import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +28,9 @@ public class ReadingProgressServiceImpl implements ReadingProgressService {
     @Autowired
     private ReadingProgressMapper readingProgressMapper;
 
+    @Autowired
+    private UserStatisticsService userStatisticsService;
+
     @Override
     public ReadingProgressDTO create(ReadingProgressDTO dto, User user, Book book) {
         ReadingProgress readingProgress = new ReadingProgress();
@@ -36,6 +41,12 @@ public class ReadingProgressServiceImpl implements ReadingProgressService {
         readingProgress.setReadingStatus(readingProgressMapper.toReadingStatus(dto.getReadingStatus()));
 
         ReadingProgress savedProgress = readingProgressRepository.save(readingProgress);
+        userStatisticsService.updateStatisticsWithProgress(user, savedProgress);
+
+        if (savedProgress.getReadingStatus().name().equalsIgnoreCase(ReadingStatus.COMPLETED.name())) {
+            userStatisticsService.updateCompletedBooks(user);
+        }
+
         return readingProgressMapper.toDTO(savedProgress);
     }
 
