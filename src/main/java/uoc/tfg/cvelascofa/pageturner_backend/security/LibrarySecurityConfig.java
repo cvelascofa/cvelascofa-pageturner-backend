@@ -50,6 +50,8 @@ public class LibrarySecurityConfig {
             "/roles/**",
             "/friends/**",
             "/genres/**",
+            "/challenges/**",
+            "/user-challenges/**"
     };
 
     private static final String[] ADMIN_URL = {
