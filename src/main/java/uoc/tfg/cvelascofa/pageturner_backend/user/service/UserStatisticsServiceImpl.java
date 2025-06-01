@@ -2,16 +2,29 @@ package uoc.tfg.cvelascofa.pageturner_backend.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.dto.ReviewDTO;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.entity.ReadingProgress;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.enums.ReadingStatus;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReadingProgressRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReviewRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces.ReviewService;
+import uoc.tfg.cvelascofa.pageturner_backend.challenge.service.interfaces.ChallengeService;
+import uoc.tfg.cvelascofa.pageturner_backend.challenge.service.interfaces.UserChallengeService;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserStatisticsDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.user.entity.MonthlyLeaderboard;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.UserStatistics;
+import uoc.tfg.cvelascofa.pageturner_backend.user.repository.MonthlyLeaderboardRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserStatisticsRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.mapper.UserStatisticsMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +33,8 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
     private final UserStatisticsRepository userStatisticsRepository;
     private final UserStatisticsMapper userStatisticsMapper;
     private final ReadingProgressRepository readingProgressRepository;
+    private final MonthlyLeaderboardRepository leaderboardRepository;
+    private final ChallengeService challengeService;
 
     @Override
     public UserStatisticsDTO getUserStatistics(Long userId) {
@@ -30,17 +45,47 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
     }
 
     @Override
-    public void updateStatistics(User user) {
-        // TODO: Calculate statistics
-        UserStatistics stats = userStatisticsRepository.findByUserId(user.getId()).orElseGet(() -> {
-            UserStatistics newStats = new UserStatistics();
-            newStats.setUser(user);
-            return newStats;
-        });
+    public void updateStatisticsWithProgress(User user, ReadingProgress newProgress) {
+        UserStatistics stats = getOrCreateStats(user);
 
-        stats.setTotalBooksRead(0);
-        stats.setTotalPagesRead(0);
-        stats.setAverageRating(0.0);
+        int pagesRead = newProgress.getPagesRead() != null ? newProgress.getPagesRead() : 0;
+        stats.setTotalPagesRead(stats.getTotalPagesRead() + pagesRead);
+
+        if (newProgress.getProgressDate() != null) {
+            LocalDate progressDate = newProgress.getProgressDate().toLocalDate();
+            LocalDate now = LocalDate.now();
+
+            boolean isSameMonthAndYear =
+                    progressDate.getMonthValue() == now.getMonthValue() &&
+                            progressDate.getYear() == now.getYear();
+
+            if (isSameMonthAndYear) {
+                stats.setPagesReadThisMonth(stats.getPagesReadThisMonth() + pagesRead);
+            }
+        }
+
+        userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+    }
+
+    @Override
+    public void recalculateReadThisMonth(User user) {
+        UserStatistics stats = getOrCreateStats(user);
+
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentYear = LocalDate.now().getYear();
+
+        int pagesReadThisMonth = readingProgressRepository
+                .sumPagesReadByUserIdAndMonth(user.getId(), currentMonth, currentYear)
+                .orElse(0);
+
+        stats.setPagesReadThisMonth(pagesReadThisMonth);
 
         userStatisticsRepository.save(stats);
     }
@@ -54,6 +99,92 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
         stats.setAverageRating(0.0);
 
         userStatisticsRepository.save(stats);
+    }
+
+    @Override
+    public void updateRatingStats(User user, List<ReviewDTO> userReviews) {
+        int totalRatings = userReviews.size();
+        double averageRating = 0.0;
+
+        if (totalRatings > 0) {
+            double sumRatings = userReviews.stream()
+                    .mapToInt(ReviewDTO::getRating)
+                    .sum();
+            averageRating = sumRatings / totalRatings;
+        }
+
+        UserStatistics stats = this.getOrCreateStats(user);
+
+        stats.setTotalRatings(totalRatings);
+        stats.setAverageRating(averageRating);
+
+        userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+
+    }
+
+    private UserStatistics getOrCreateStats(User user) {
+        return userStatisticsRepository.findByUserId(user.getId())
+                .orElseGet(() -> {
+                    UserStatistics newStats = new UserStatistics();
+                    newStats.setUser(user);
+                    newStats.setTotalBooksRead(0);
+                    newStats.setTotalPagesRead(0);
+                    newStats.setAverageRating(0.0);
+                    newStats.setTotalRatings(0);
+                    return newStats;
+                });
+    }
+
+    @Override
+    public void updateCompletedBooks(User user) {
+        List<ReadingProgress> completedBooks = readingProgressRepository
+                .findByUserIdAndReadingStatus(user.getId(), ReadingStatus.COMPLETED);
+
+        int totalCompleted = completedBooks.size();
+
+        YearMonth currentMonth = YearMonth.now();
+        int booksThisMonth = (int) completedBooks.stream()
+                .filter(book -> {
+                    LocalDateTime progressDate = book.getProgressDate();
+                    return progressDate != null &&
+                            YearMonth.from(progressDate).equals(currentMonth);
+                })
+                .count();
+
+        UserStatistics stats = getOrCreateStats(user);
+        stats.setTotalBooksRead(totalCompleted);
+        stats.setBooksReadThisMonth(booksThisMonth);
+
+        userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+    }
+
+    public void updateRankingThisMonth(User user) {
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentYear = LocalDate.now().getYear();
+
+        MonthlyLeaderboard leaderboard = leaderboardRepository
+                .findByUserIdAndMonthAndYear(user.getId(), currentMonth, currentYear)
+                .orElse(null);
+
+        if (leaderboard != null) {
+            UserStatistics stats = getOrCreateStats(user);
+            stats.setRankingThisMonth(leaderboard.getRankingPosition());
+            userStatisticsRepository.save(stats);
+        }
     }
 
 }

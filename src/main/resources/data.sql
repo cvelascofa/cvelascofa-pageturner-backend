@@ -3,6 +3,7 @@ TRUNCATE TABLE authors CASCADE;
 TRUNCATE TABLE genres CASCADE;
 TRUNCATE TABLE edition_types CASCADE;
 TRUNCATE TABLE languages CASCADE;
+TRUNCATE TABLE challenges CASCADE;
 
 INSERT INTO authors (id, name, bio, website, followers_count, created_at, updated_at) VALUES
 (1, 'S. M. Alcaine', 'Spanish writer and audiovisual translator Sònia Meseguer Alcaine writes romantic novels under this pen name. She studied Translation and Audiovisual Translation in Barcelona and published her first traditional romance in 2023.', NULL, 250000, NOW(), NOW()),
@@ -34,7 +35,7 @@ INSERT INTO authors (id, name, bio, website, followers_count, created_at, update
 
 TRUNCATE TABLE publishers CASCADE;
 
-SELECT setval(pg_get_serial_sequence('authors', 'id'), (SELECT MAX(id) FROM authors));
+SELECT setval(pg_get_serial_sequence('authors', 'id'), COALESCE((SELECT MAX(id) FROM authors), 1));
 
 INSERT INTO genres (id, name, created_at, updated_at) VALUES
 (1, 'Fantasy', NOW(), NOW()),
@@ -144,3 +145,27 @@ SELECT 'LIBRARIAN', 'Librarian with special permissions', NOW(), NOW()
 INSERT INTO roles (name, description, created_at, updated_at)
 SELECT 'ADMIN', 'Administrator with full permissions', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM roles WHERE name = 'ADMIN');
+
+INSERT INTO challenges (name, description, target_quantity, badge_url, category, created_at)
+VALUES
+    ('Bronze Rank', 'Climb to Bronze in the monthly leaderboard — not bad for a warm-up!', 1, '/badges/monthly-classification/bronze.png', 'Monthly Classification', NOW()),
+    ('Silver Rank', 'Shine in Silver this month — so close to glory!', 1, '/badges/monthly-classification/silver.png', 'Monthly Classification', NOW()),
+    ('Gold Rank', 'Rule the monthly leaderboard and wear the Gold crown — flex responsibly!', 1, '/badges/monthly-classification/gold.png', 'Monthly Classification', NOW());
+
+INSERT INTO challenges (name, description, target_quantity, badge_url, category, created_at)
+VALUES
+    ('1 Book Read', 'Read your first book — every legend starts somewhere.', 1, '/badges/books-read/1-book-read.png', 'Books Read', NOW()),
+    ('3 Books Read', 'Three books down — you’re on a roll! Next stop: literary fame!', 3, '/badges/books-read/3-books-read.png', 'Books Read', NOW()),
+    ('10 Books Read', 'Ten books? Who are you, a librarian ninja?', 10, '/badges/books-read/10-books-read.png', 'Books Read', NOW());
+
+INSERT INTO challenges (name, description, target_quantity, badge_url, category, created_at)
+VALUES
+    ('1K Pages Read', 'Read 1,000 pages — welcome to the big leagues.', 1000, '/badges/pages-read/1k-pages-read.png', 'Pages Read', NOW()),
+    ('5K Pages Read', '5,000 pages flipped — your thumbs must be ripped.', 5000, '/badges/pages-read/5k-pages-read.png', 'Pages Read', NOW()),
+    ('10K Pages Read', '10,000 pages read — are you powered by coffee or magic?', 10000, '/badges/pages-read/10k-pages-read.png', 'Pages Read', NOW());
+
+INSERT INTO challenges (name, description, target_quantity, badge_url, category, created_at)
+VALUES
+    ('1 Rating Given', 'Give your first rating — your opinion matters, even if it’s spicy.', 1, '/badges/ratings/1-rating.png', 'Ratings Given', NOW()),
+    ('10 Ratings Given', '10 books rated — you’re basically a literary critic now.', 10, '/badges/ratings/10-ratings.png', 'Ratings Given', NOW()),
+    ('25 Ratings Given', '25 books rated — Rotten Tomatoes who? You’re the real MVP.', 25, '/badges/ratings/25-ratings.png', 'Ratings Given', NOW());

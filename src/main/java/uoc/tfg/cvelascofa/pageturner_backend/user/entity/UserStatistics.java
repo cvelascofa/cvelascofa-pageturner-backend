@@ -1,9 +1,6 @@
 package uoc.tfg.cvelascofa.pageturner_backend.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
@@ -18,25 +15,25 @@ public class UserStatistics extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    @Column(nullable = false)
     private int totalBooksRead;
-    private int mostBooksInMonth;
-    private int longestReadingStreak;
-    private int currentReadingStreak;
+
+    @Column(nullable = false)
+    private int rankingThisMonth;
+
+    @Column(nullable = false)
+    private int booksReadThisMonth;
+
+    @Column(nullable = false)
+    private int pagesReadThisMonth;
+
+    @Column(nullable = false)
     private int totalPagesRead;
 
+    @Column(nullable = false)
+    private int totalRatings;
+
+    @Column(nullable = false)
     private double averageRating;
-
-    private LocalDate lastReadingSession;
-
-    private int booksLastYear;
-    private int pagesLastYear;
-
-    private String favoriteAuthor;
-    private String mostReadGenre;
-
-    private String mostActiveMonth;
-
-    private LocalDate firstBookReadDate;
-    private LocalDate latestBookReadDate;
 
 }
