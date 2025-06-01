@@ -19,13 +19,13 @@ public class UserStatistics extends BaseEntity {
     private int totalBooksRead;
 
     @Column(nullable = false)
-    private int mostBooksInMonth;
+    private int rankingThisMonth;
 
     @Column(nullable = false)
-    private int longestReadingStreak;
+    private int booksReadThisMonth;
 
     @Column(nullable = false)
-    private int currentReadingStreak;
+    private int pagesReadThisMonth;
 
     @Column(nullable = false)
     private int totalPagesRead;
@@ -35,20 +35,5 @@ public class UserStatistics extends BaseEntity {
 
     @Column(nullable = false)
     private double averageRating;
-
-    private LocalDate lastReadingSession;
-
-    @Column(nullable = false)
-    private int booksLastYear;
-
-    @Column(nullable = false)
-    private int pagesLastYear;
-
-    private String favoriteAuthor;
-    private String mostReadGenre;
-    private String mostActiveMonth;
-
-    private LocalDate firstBookReadDate;
-    private LocalDate latestBookReadDate;
 
 }

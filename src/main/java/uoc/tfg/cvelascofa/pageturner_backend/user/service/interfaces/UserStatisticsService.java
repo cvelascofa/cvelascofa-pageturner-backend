@@ -14,5 +14,7 @@ public interface UserStatisticsService {
     void createStatistics(User user);
     void updateRatingStats(User user, List<ReviewDTO> userReviews);
     void updateCompletedBooks(User user);
+    void updateRankingThisMonth(User user);
+    void recalculateReadThisMonth(User user);
 
 }

@@ -8,13 +8,20 @@ import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.enums.ReadingStatu
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReadingProgressRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReviewRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.service.interfaces.ReviewService;
+import uoc.tfg.cvelascofa.pageturner_backend.challenge.service.interfaces.ChallengeService;
+import uoc.tfg.cvelascofa.pageturner_backend.challenge.service.interfaces.UserChallengeService;
 import uoc.tfg.cvelascofa.pageturner_backend.user.dto.UserStatisticsDTO;
+import uoc.tfg.cvelascofa.pageturner_backend.user.entity.MonthlyLeaderboard;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.User;
 import uoc.tfg.cvelascofa.pageturner_backend.user.entity.UserStatistics;
+import uoc.tfg.cvelascofa.pageturner_backend.user.repository.MonthlyLeaderboardRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserStatisticsRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.mapper.UserStatisticsMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,6 +33,8 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
     private final UserStatisticsRepository userStatisticsRepository;
     private final UserStatisticsMapper userStatisticsMapper;
     private final ReadingProgressRepository readingProgressRepository;
+    private final MonthlyLeaderboardRepository leaderboardRepository;
+    private final ChallengeService challengeService;
 
     @Override
     public UserStatisticsDTO getUserStatistics(Long userId) {
@@ -39,13 +48,44 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
     public void updateStatisticsWithProgress(User user, ReadingProgress newProgress) {
         UserStatistics stats = getOrCreateStats(user);
 
-        if (stats.getLastReadingSession() == null ||
-                newProgress.getProgressDate().isAfter(stats.getLastReadingSession().atStartOfDay())) {
-            stats.setLastReadingSession(newProgress.getProgressDate().toLocalDate());
+        int pagesRead = newProgress.getPagesRead() != null ? newProgress.getPagesRead() : 0;
+        stats.setTotalPagesRead(stats.getTotalPagesRead() + pagesRead);
+
+        if (newProgress.getProgressDate() != null) {
+            LocalDate progressDate = newProgress.getProgressDate().toLocalDate();
+            LocalDate now = LocalDate.now();
+
+            boolean isSameMonthAndYear =
+                    progressDate.getMonthValue() == now.getMonthValue() &&
+                            progressDate.getYear() == now.getYear();
+
+            if (isSameMonthAndYear) {
+                stats.setPagesReadThisMonth(stats.getPagesReadThisMonth() + pagesRead);
+            }
         }
 
-        int updatedPages = stats.getTotalPagesRead() + (newProgress.getPagesRead() != null ? newProgress.getPagesRead() : 0);
-        stats.setTotalPagesRead(updatedPages);
+        userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+    }
+
+    @Override
+    public void recalculateReadThisMonth(User user) {
+        UserStatistics stats = getOrCreateStats(user);
+
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentYear = LocalDate.now().getYear();
+
+        int pagesReadThisMonth = readingProgressRepository
+                .sumPagesReadByUserIdAndMonth(user.getId(), currentMonth, currentYear)
+                .orElse(0);
+
+        stats.setPagesReadThisMonth(pagesReadThisMonth);
 
         userStatisticsRepository.save(stats);
     }
@@ -79,6 +119,14 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
         stats.setAverageRating(averageRating);
 
         userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+
     }
 
     private UserStatistics getOrCreateStats(User user) {
@@ -96,11 +144,47 @@ public class UserStatisticsServiceImpl implements UserStatisticsService {
 
     @Override
     public void updateCompletedBooks(User user) {
-        List<ReadingProgress> completedBooks = readingProgressRepository.findByUserIdAndReadingStatus(user.getId(), ReadingStatus.COMPLETED);
+        List<ReadingProgress> completedBooks = readingProgressRepository
+                .findByUserIdAndReadingStatus(user.getId(), ReadingStatus.COMPLETED);
+
         int totalCompleted = completedBooks.size();
+
+        YearMonth currentMonth = YearMonth.now();
+        int booksThisMonth = (int) completedBooks.stream()
+                .filter(book -> {
+                    LocalDateTime progressDate = book.getProgressDate();
+                    return progressDate != null &&
+                            YearMonth.from(progressDate).equals(currentMonth);
+                })
+                .count();
+
         UserStatistics stats = getOrCreateStats(user);
         stats.setTotalBooksRead(totalCompleted);
+        stats.setBooksReadThisMonth(booksThisMonth);
+
         userStatisticsRepository.save(stats);
+
+        challengeService.checkAndAwardChallenges(
+                user.getId(),
+                stats.getTotalBooksRead(),
+                stats.getTotalPagesRead(),
+                stats.getTotalRatings()
+        );
+    }
+
+    public void updateRankingThisMonth(User user) {
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentYear = LocalDate.now().getYear();
+
+        MonthlyLeaderboard leaderboard = leaderboardRepository
+                .findByUserIdAndMonthAndYear(user.getId(), currentMonth, currentYear)
+                .orElse(null);
+
+        if (leaderboard != null) {
+            UserStatistics stats = getOrCreateStats(user);
+            stats.setRankingThisMonth(leaderboard.getRankingPosition());
+            userStatisticsRepository.save(stats);
+        }
     }
 
 }

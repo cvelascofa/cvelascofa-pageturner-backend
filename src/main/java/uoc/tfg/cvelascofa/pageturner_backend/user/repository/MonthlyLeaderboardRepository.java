@@ -13,5 +13,6 @@ public interface MonthlyLeaderboardRepository extends JpaRepository<MonthlyLeade
     Optional<MonthlyLeaderboard> findByUserIdAndMonthAndYear(Long userId, Integer month, Integer year);
     List<MonthlyLeaderboard> findAllByMonthAndYearOrderByPagesReadDesc(Integer month, Integer year);
     List<MonthlyLeaderboard> findAllByMonthAndYear(Integer month, Integer year);
+    List<MonthlyLeaderboard> findTop3ByMonthAndYearOrderByRankingPositionAsc(int month, int year);
 
 }

@@ -6,8 +6,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import uoc.tfg.cvelascofa.pageturner_backend.shared.BaseEntity;
 
-import java.time.LocalDateTime;
-
 @Data
 @Entity
 @Table(name = "monthly_leaderboard")
@@ -27,8 +25,5 @@ public class MonthlyLeaderboard extends BaseEntity {
 
     @Column(name = "ranking_position", nullable = false)
     private Integer rankingPosition;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
 }

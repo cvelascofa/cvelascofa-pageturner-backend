@@ -9,6 +9,7 @@ import uoc.tfg.cvelascofa.pageturner_backend.user.entity.MonthlyLeaderboard;
 import uoc.tfg.cvelascofa.pageturner_backend.user.mapper.MonthlyLeaderboardMapper;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.MonthlyLeaderboardRepository;
 import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class MonthlyLeaderboardBatchService {
     private final ReadingProgressRepository readingProgressRepository;
     private final MonthlyLeaderboardRepository leaderboardRepository;
     private final MonthlyLeaderboardMapper monthlyLeaderboardMapper;
+    private final UserStatisticsService userStatisticsService;
 
     @Scheduled(cron = "0 0 0,12 * * *")
     public void createMonthlyLeaderboardForAllUsers() {
@@ -87,6 +89,7 @@ public class MonthlyLeaderboardBatchService {
         int position = 1;
         for (MonthlyLeaderboard leaderboard : currentLeaderboards) {
             Long userId = leaderboard.getUserId();
+            var user = userRepository.findById(userId).orElse(null);
 
             int updatedPagesRead = readingProgressRepository
                     .sumPagesReadByUserIdAndMonth(userId, month, year)
@@ -95,6 +98,11 @@ public class MonthlyLeaderboardBatchService {
             leaderboard.setPagesRead(updatedPagesRead);
             leaderboard.setRankingPosition(position++);
             leaderboard.setUpdatedAt(LocalDateTime.now());
+
+            if (user != null) {
+                userStatisticsService.updateRankingThisMonth(user);
+                userStatisticsService.recalculateReadThisMonth(user);
+            }
         }
 
         leaderboardRepository.saveAll(currentLeaderboards);
