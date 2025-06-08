@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import uoc.tfg.cvelascofa.pageturner_backend.exception.UserNotFoundException;
+import uoc.tfg.cvelascofa.pageturner_backend.infrastructure.exception.UserNotFoundException;
 
 
 @RestController
@@ -34,10 +34,5 @@ public class JWTController {
         else {
             throw new UserNotFoundException("Invalid user credentials");
         }
-    }
-
-    @GetMapping
-    public String testUserRole() {
-        return "test funciona";
     }
 }

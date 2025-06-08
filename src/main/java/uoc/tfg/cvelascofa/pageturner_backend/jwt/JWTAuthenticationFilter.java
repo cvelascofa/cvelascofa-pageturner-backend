@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import uoc.tfg.cvelascofa.pageturner_backend.security.LibraryUserDetailsService;
+import uoc.tfg.cvelascofa.pageturner_backend.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private JWTService jwtService;
 
     @Autowired
-    private LibraryUserDetailsService libraryUserDetailsService;
+    private CustomUserDetailsService libraryUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
