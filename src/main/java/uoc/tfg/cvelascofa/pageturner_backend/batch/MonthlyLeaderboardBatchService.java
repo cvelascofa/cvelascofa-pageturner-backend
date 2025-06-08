@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import uoc.tfg.cvelascofa.pageturner_backend.book_interaction.repository.ReadingProgressRepository;
-import uoc.tfg.cvelascofa.pageturner_backend.user.entity.MonthlyLeaderboard;
-import uoc.tfg.cvelascofa.pageturner_backend.user.mapper.MonthlyLeaderboardMapper;
-import uoc.tfg.cvelascofa.pageturner_backend.user.repository.MonthlyLeaderboardRepository;
-import uoc.tfg.cvelascofa.pageturner_backend.user.repository.UserRepository;
-import uoc.tfg.cvelascofa.pageturner_backend.user.service.interfaces.UserStatisticsService;
+import uoc.tfg.cvelascofa.pageturner_backend.bookinteraction.repository.ReadingProgressRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.gamification.entity.MonthlyLeaderboard;
+import uoc.tfg.cvelascofa.pageturner_backend.gamification.mapper.MonthlyLeaderboardMapper;
+import uoc.tfg.cvelascofa.pageturner_backend.gamification.repository.MonthlyLeaderboardRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.usermanagement.repository.UserRepository;
+import uoc.tfg.cvelascofa.pageturner_backend.usermanagement.service.interfaces.UserStatisticsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,18 +75,21 @@ public class MonthlyLeaderboardBatchService {
             leaderboard.setUpdatedAt(LocalDateTime.now());
         }
 
+        allLeaderboards.sort((a, b) -> Integer.compare(b.getPagesRead(), a.getPagesRead()));
+
         leaderboardRepository.saveAll(allLeaderboards);
         log.info("🔄 Updated {} leaderboard entries with recalculated pages read!", allLeaderboards.size());
     }
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void updateCurrentMonthLeaderboards() {
         int month = java.time.LocalDate.now().getMonthValue();
         int year = java.time.LocalDate.now().getYear();
 
         List<MonthlyLeaderboard> currentLeaderboards = leaderboardRepository.findAllByMonthAndYearOrderByPagesReadDesc(month, year);
 
-        int position = 1;
+
         for (MonthlyLeaderboard leaderboard : currentLeaderboards) {
             Long userId = leaderboard.getUserId();
             var user = userRepository.findById(userId).orElse(null);
@@ -94,14 +97,23 @@ public class MonthlyLeaderboardBatchService {
             int updatedPagesRead = readingProgressRepository
                     .sumPagesReadByUserIdAndMonth(userId, month, year)
                     .orElse(0);
-
             leaderboard.setPagesRead(updatedPagesRead);
+        }
+
+        currentLeaderboards.sort((a, b) -> Integer.compare(b.getPagesRead(), a.getPagesRead()));
+
+        int position = 1;
+        for (MonthlyLeaderboard leaderboard : currentLeaderboards) {
             leaderboard.setRankingPosition(position++);
             leaderboard.setUpdatedAt(LocalDateTime.now());
 
+            Long userId = leaderboard.getUserId();
+            var user = userRepository.findById(userId).orElse(null);
+
             if (user != null) {
-                userStatisticsService.updateRankingThisMonth(user);
+                userStatisticsService.updateRankingThisMonth(user, leaderboard);
                 userStatisticsService.recalculateReadThisMonth(user);
+                userStatisticsService.recalculateBooksFinishedThisMonth(user);
             }
         }
 
